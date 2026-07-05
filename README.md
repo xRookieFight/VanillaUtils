@@ -3,17 +3,17 @@ Essential commands for [Dragonfly](https://github.com/df-mc/dragonfly), updated 
 
 Based on [EssentialsGO](https://github.com/xerenahmed/EssentialsGO) by [xerenahmed](https://github.com/xerenahmed) - all credit for the original project goes to him.
 
-## Ready for:
-- [x] /help - Show server commands and descriptions.
-- [x] /gamemode - Changes the player to a specific game mode.
-- [x] /teleport - Teleport everywhere.
-- [x] /defaultgamemode - Set the default gamemode.
-- [x] /setworldspawn - Sets a worlds' spawn point.
-- [x] /xyz - Show/hide coordinates.
-- [x] /op - Give op permissions to a player.
-- [x] /deop - Take op permissions from a player.
-- [x] /stop - Stop the server from in-game.
-- [x] /time - Changes or queries the worlds game time.
+## Available commands:
+- /help - Show server commands and descriptions.
+- /gamemode - Changes the player to a specific game mode.
+- /teleport - Teleport everywhere.
+- /defaultgamemode - Set the default gamemode.
+- /setworldspawn - Sets a worlds' spawn point.
+- /xyz - Show/hide coordinates.
+- /op - Give op permissions to a player.
+- /deop - Take op permissions from a player.
+- /stop - Stop the server from in-game.
+- /time - Changes or queries the worlds game time.
 
 ## Usage
 ### Get the package
