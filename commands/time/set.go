@@ -7,34 +7,39 @@ import (
 )
 
 type Set struct {
-	Sub    cmd.SubCommand `cmd:"set"`
-	Amount int            `name:"amount"`
+	Sub    cmd.SubCommand            `cmd:"set"`
+	Amount int                       `cmd:"amount"`
+	Args   cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (Set) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 type SetTimeSpec struct {
-	Sub  cmd.SubCommand `cmd:"set"`
-	Time spec           `name:"time"`
+	Sub  cmd.SubCommand            `cmd:"set"`
+	Time spec                      `cmd:"time"`
+	Args cmd.Optional[cmd.Varargs] `cmd:"args"`
 }
 
-func setTime(source cmd.Source, output *cmd.Output, tx *world.Tx, t int) {
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
+func (SetTimeSpec) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
+}
 
+func setTime(output *cmd.Output, tx *world.Tx, t int) {
 	tx.World().SetTime(t)
 	output.Printf("Set the time to %d", t)
 }
 
-func (t Set) Run(source cmd.Source, output *cmd.Output, tx *world.Tx) {
-	setTime(source, output, tx, t.Amount)
+func (t Set) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
+	setTime(output, tx, t.Amount)
 }
 
-func (t SetTimeSpec) Run(source cmd.Source, output *cmd.Output, tx *world.Tx) {
+func (t SetTimeSpec) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
 	tf := map[spec]int64{
 		"day": 1000, "night": 13000, "noon": 6000, "midnight": 18000, "sunrise": 23000, "sunset": 12000,
 	}[t.Time]
-	setTime(source, output, tx, int(tf))
+	setTime(output, tx, int(tf))
 }
 
 type spec string

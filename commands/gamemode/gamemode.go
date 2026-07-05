@@ -9,20 +9,20 @@ import (
 
 type GameMode struct {
 	GameMode mode
-	Target   []cmd.Target `optional:""`
+	Target   cmd.Optional[[]cmd.Target]
+	Args     cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (GameMode) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 func (t GameMode) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
-
 	mode := StringToGameMode(string(t.GameMode))
 	modeString := GameModeToName(mode)
 
-	if len(t.Target) > 0 {
-		if pt, ok := t.Target[0].(*player.Player); ok {
+	if targets, _ := t.Target.Load(); len(targets) > 0 {
+		if pt, ok := targets[0].(*player.Player); ok {
 			pt.SetGameMode(mode)
 			output.Printf("Set %s game mode to %s.", pt.Name(), modeString)
 			pt.Messagef("Your game mode has been changed to %s.", modeString)

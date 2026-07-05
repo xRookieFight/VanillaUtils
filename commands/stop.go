@@ -7,13 +7,15 @@ import (
 	"github.com/xrookiefight/vanillautils/global"
 )
 
-type Stop struct{}
+type Stop struct {
+	Args cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
 
-func (t Stop) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
+func (Stop) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
+}
+
+func (t Stop) Run(_ cmd.Source, output *cmd.Output, _ *world.Tx) {
 	output.Printf("Stopping server.")
 	// Close must not run inside the world transaction this command executes in,
 	// otherwise shutting the world down would deadlock.

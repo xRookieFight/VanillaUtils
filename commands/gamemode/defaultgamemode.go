@@ -7,14 +7,15 @@ import (
 )
 
 type DefaultGameMode struct {
-	GameMode mode // look at gamemode.go for "mode"
+	GameMode mode                      // look at gamemode.go for "mode"
+	Args     cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (DefaultGameMode) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 func (t DefaultGameMode) Run(source cmd.Source, output *cmd.Output, tx *world.Tx) {
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
 	mode := StringToGameMode(string(t.GameMode))
 	tx.World().SetDefaultGameMode(mode)
 	output.Printf("Default world game mode is %s now.", GameModeToName(mode))

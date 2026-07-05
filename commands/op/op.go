@@ -7,14 +7,14 @@ import (
 
 type Op struct {
 	Player string
+	Args   cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (Op) Allow(src cmd.Source) bool {
+	return IsOp(src)
 }
 
 func (t Op) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
-	if !IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
-
 	if t.Player != "" {
 		AddOp(t.Player)
 		output.Printf("Has been granted op permissions to %s.", t.Player)
@@ -25,14 +25,14 @@ func (t Op) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
 
 type Deop struct {
 	Player string
+	Args   cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (Deop) Allow(src cmd.Source) bool {
+	return IsOp(src)
 }
 
 func (t Deop) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
-	if !IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
-
 	if t.Player != "" {
 		DelOp(t.Player)
 		output.Printf("Has been taken op permissions from %s.", t.Player)

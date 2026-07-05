@@ -6,8 +6,9 @@ import (
 )
 
 type Query struct {
-	Sub  cmd.SubCommand `cmd:"query"`
-	Time timeQuery      `name:"time"`
+	Sub  cmd.SubCommand            `cmd:"query"`
+	Time timeQuery                 `cmd:"time"`
+	Args cmd.Optional[cmd.Varargs] `cmd:"args"`
 }
 
 func (t Query) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {

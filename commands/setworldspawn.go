@@ -10,28 +10,31 @@ import (
 
 type SetWorldSpawnXYZ struct {
 	X, Y, Z float64
+	Args    cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (SetWorldSpawnXYZ) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 func (t SetWorldSpawnXYZ) Run(source cmd.Source, output *cmd.Output, tx *world.Tx) {
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
 	bp := cube.Pos{int(t.X), int(t.Y), int(t.Z)}
 	tx.World().SetSpawn(bp)
 	output.Printf("Set the default world spawn point to (%d, %d, %d)", bp.X(), bp.Y(), bp.Z())
 }
 
 type SetWorldSpawn struct {
-	Sub string `optional:""`
+	Args cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (SetWorldSpawn) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 func (t SetWorldSpawn) Run(source cmd.Source, output *cmd.Output, tx *world.Tx) {
-	if t.Sub != "" {
-		return
-	}
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
+	if args, ok := t.Args.Load(); ok && args != "" {
+		// Arguments were passed but did not match the XYZ overload.
+		output.Error("Usage: /setworldspawn <X: float> <Y: float> <Z: float>")
 		return
 	}
 	if p, ok := source.(*player.Player); ok {

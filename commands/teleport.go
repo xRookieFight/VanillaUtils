@@ -12,6 +12,11 @@ import (
 
 type TeleportXYZ struct {
 	X, Y, Z float64
+	Args    cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (TeleportXYZ) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 func (t TeleportXYZ) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
@@ -20,17 +25,18 @@ func (t TeleportXYZ) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
 		return
 	}
 	p, _ := source.(*player.Player)
-	if !op.IsOp(p) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
 	p.Teleport(mgl64.Vec3{t.X, t.Y, t.Z})
 	output.Printf("Teleported to X: %d Y: %d Z: %d", int(t.X), int(t.Y), int(t.Z))
 }
 
 type TeleportPlayer struct {
 	Player []cmd.Target
-	Target []cmd.Target `optional:""`
+	Target cmd.Optional[[]cmd.Target]
+	Args   cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
+
+func (TeleportPlayer) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
 }
 
 func (t TeleportPlayer) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) {
@@ -38,13 +44,14 @@ func (t TeleportPlayer) Run(source cmd.Source, output *cmd.Output, _ *world.Tx) 
 		output.Error("Usage: /teleport <Player: target> [Target: target]")
 	}
 
+	targets, _ := t.Target.Load()
 	for _, target := range t.Player {
 		if tp1, ok := target.(*player.Player); ok {
-			if len(t.Target) < 1 {
+			if len(targets) < 1 {
 				if p, ok := source.(*player.Player); ok {
 					t.TeleportAnotherPlayer(p, tp1)
 				}
-			} else if tp2, ok := t.Target[0].(*player.Player); ok {
+			} else if tp2, ok := targets[0].(*player.Player); ok {
 				t.TeleportPlayerToAnotherPlayer(tp1, tp2)
 				output.Printf("%s has been teleported to %s.", tp1.Name(), tp2.Name())
 			} else {

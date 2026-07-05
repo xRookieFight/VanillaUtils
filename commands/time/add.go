@@ -7,16 +7,16 @@ import (
 )
 
 type Add struct {
-	Sub    cmd.SubCommand `cmd:"add"`
-	Amount int            `name:"amount"`
+	Sub    cmd.SubCommand            `cmd:"add"`
+	Amount int                       `cmd:"amount"`
+	Args   cmd.Optional[cmd.Varargs] `cmd:"args"`
 }
 
-func (t Add) Run(source cmd.Source, output *cmd.Output, tx *world.Tx) {
-	if !op.IsOp(source) {
-		output.Error("You don't have permission to run this command.")
-		return
-	}
+func (Add) Allow(src cmd.Source) bool {
+	return op.IsOp(src)
+}
 
+func (t Add) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
 	w := tx.World()
 	w.SetTime(w.Time() + t.Amount)
 	output.Printf("Added %d to the time", t.Amount)

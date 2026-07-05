@@ -7,7 +7,9 @@ import (
 	"github.com/xrookiefight/vanillautils/console"
 )
 
-type XYZ struct{}
+type XYZ struct {
+	Args cmd.Optional[cmd.Varargs] `cmd:"args"`
+}
 
 var opened = map[string]bool{}
 
