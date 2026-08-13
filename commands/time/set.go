@@ -4,6 +4,7 @@ import (
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/xrookiefight/vanillautils/commands/op"
+	"github.com/xrookiefight/vanillautils/lang"
 )
 
 type Set struct {
@@ -28,7 +29,7 @@ func (SetTimeSpec) Allow(src cmd.Source) bool {
 
 func setTime(output *cmd.Output, tx *world.Tx, t int) {
 	tx.World().SetTime(t)
-	output.Printf("Set the time to %d", t)
+	output.Printt(lang.MessageTimeSet, t)
 }
 
 func (t Set) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
@@ -36,10 +37,10 @@ func (t Set) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
 }
 
 func (t SetTimeSpec) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
-	tf := map[spec]int64{
+	tf := map[spec]int{
 		"day": 1000, "night": 13000, "noon": 6000, "midnight": 18000, "sunrise": 23000, "sunset": 12000,
 	}[t.Time]
-	setTime(output, tx, int(tf))
+	setTime(output, tx, tf)
 }
 
 type spec string

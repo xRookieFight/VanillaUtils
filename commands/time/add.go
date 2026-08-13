@@ -4,6 +4,7 @@ import (
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/xrookiefight/vanillautils/commands/op"
+	"github.com/xrookiefight/vanillautils/lang"
 )
 
 type Add struct {
@@ -19,5 +20,5 @@ func (Add) Allow(src cmd.Source) bool {
 func (t Add) Run(_ cmd.Source, output *cmd.Output, tx *world.Tx) {
 	w := tx.World()
 	w.SetTime(w.Time() + t.Amount)
-	output.Printf("Added %d to the time", t.Amount)
+	output.Printt(lang.MessageTimeAdded, t.Amount)
 }

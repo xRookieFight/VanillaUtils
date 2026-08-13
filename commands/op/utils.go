@@ -38,10 +38,16 @@ func IsOp(s cmd.Source) bool {
 		return true
 	}
 	if p, ok := s.(*player.Player); ok {
-		for _, p_ := range ops {
-			if p_ == strings.ToLower(p.Name()) {
-				return true
-			}
+		return IsOpName(p.Name())
+	}
+
+	return false
+}
+
+func IsOpName(name string) bool {
+	for _, p_ := range ops {
+		if p_ == strings.ToLower(name) {
+			return true
 		}
 	}
 
