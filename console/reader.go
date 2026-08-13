@@ -37,9 +37,9 @@ func StartConsole() {
 				}
 
 				args := strings.TrimPrefix(strings.TrimPrefix(commandString, commandName), " ")
-				<-global.Server.World().Exec(func(tx *world.Tx) {
+				<-global.Server.World().Do(func(tx *world.Tx) {
 					command.Execute(args, source, tx)
-				})
+				}).Done()
 			}
 		}
 	}()
